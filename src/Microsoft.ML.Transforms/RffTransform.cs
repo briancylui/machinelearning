@@ -122,8 +122,8 @@ namespace Microsoft.ML.Runtime.Data
                     generator = args.MatrixGenerator;
                 _matrixGenerator = generator.CreateComponent(host, avgDist);
 
-                int roundedUpD = RoundUp(NewDim, CfltAlign);
-                int roundedUpNumFeatures = RoundUp(SrcDim, CfltAlign);
+                int roundedUpD = RoundUp(NewDim, _cfltAlign);
+                int roundedUpNumFeatures = RoundUp(SrcDim, _cfltAlign);
                 RndFourierVectors = new AlignedArray(roundedUpD * roundedUpNumFeatures, CpuMathUtils.GetVectorAlignment());
                 RotationTerms = _useSin ? null : new AlignedArray(roundedUpD, CpuMathUtils.GetVectorAlignment());
 
@@ -158,8 +158,8 @@ namespace Microsoft.ML.Runtime.Data
                     ctx.LoadModelOrNull<IFourierDistributionSampler, SignatureLoadModel>(env, out _matrixGenerator, directoryName));
 
                 // initialize the transform matrix
-                int roundedUpD = RoundUp(NewDim, CfltAlign);
-                int roundedUpNumFeatures = RoundUp(SrcDim, CfltAlign);
+                int roundedUpD = RoundUp(NewDim, _cfltAlign);
+                int roundedUpNumFeatures = RoundUp(SrcDim, _cfltAlign);
                 RndFourierVectors = new AlignedArray(roundedUpD * roundedUpNumFeatures, CpuMathUtils.GetVectorAlignment());
                 RotationTerms = _useSin ? null : new AlignedArray(roundedUpD, CpuMathUtils.GetVectorAlignment());
                 InitializeFourierCoefficients(roundedUpNumFeatures, roundedUpD);
@@ -229,10 +229,7 @@ namespace Microsoft.ML.Runtime.Data
         private readonly TransformInfo[] _transformInfos;
 
         private const string RegistrationName = "Rff";
-
-        // REVIEW NEEDED: Used 32 (CpuMathUtils.Vector256Alignment) instead of CpuMathUtils.GetVectorAlignment()
-        // to silence the error that restricts the expression for CfltAlign to be constant.
-        private const int CfltAlign = 32 / sizeof(float);
+        private readonly int _cfltAlign;
 
         private static string TestColumnType(ColumnType type)
         {
@@ -256,6 +253,7 @@ namespace Microsoft.ML.Runtime.Data
             string source = null)
             : this(env, new Arguments() { Column = new[] { new Column() { Source = source ?? name, Name = name } }, NewDim = newDim }, input)
         {
+            _cfltAlign = CpuMathUtils.GetVectorAlignment() / sizeof(float);
         }
 
         /// <summary>
@@ -502,8 +500,8 @@ namespace Microsoft.ML.Runtime.Data
             var getSrc = GetSrcGetter<VBuffer<Float>>(input, iinfo);
             var src = default(VBuffer<Float>);
 
-            var featuresAligned = new AlignedArray(RoundUp(Infos[iinfo].TypeSrc.ValueCount, CfltAlign), CpuMathUtils.GetVectorAlignment());
-            var productAligned = new AlignedArray(RoundUp(_transformInfos[iinfo].NewDim, CfltAlign), CpuMathUtils.GetVectorAlignment());
+            var featuresAligned = new AlignedArray(RoundUp(Infos[iinfo].TypeSrc.ValueCount, _cfltAlign), CpuMathUtils.GetVectorAlignment());
+            var productAligned = new AlignedArray(RoundUp(_transformInfos[iinfo].NewDim, _cfltAlign), CpuMathUtils.GetVectorAlignment());
 
             return
                 (ref VBuffer<Float> dst) =>
@@ -518,8 +516,8 @@ namespace Microsoft.ML.Runtime.Data
             var getSrc = GetSrcGetter<Float>(input, iinfo);
             var src = default(Float);
 
-            var featuresAligned = new AlignedArray(RoundUp(1, CfltAlign), CpuMathUtils.GetVectorAlignment());
-            var productAligned = new AlignedArray(RoundUp(_transformInfos[iinfo].NewDim, CfltAlign), CpuMathUtils.GetVectorAlignment());
+            var featuresAligned = new AlignedArray(RoundUp(1, _cfltAlign), CpuMathUtils.GetVectorAlignment());
+            var productAligned = new AlignedArray(RoundUp(_transformInfos[iinfo].NewDim, _cfltAlign), CpuMathUtils.GetVectorAlignment());
 
             var oneDimensionalVector = new VBuffer<Float>(1, new Float[] { 0 });
 
