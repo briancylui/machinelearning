@@ -2,12 +2,12 @@
 
   <PropertyGroup>
     <Configurations>Debug;Release;Debug-Intrinsics;Release-Intrinsics</Configurations>
-    <TargetFramework Condition="'$(UseIntrinsics)' != 'true'">netstandard2.0</TargetFramework>
-    <TargetFrameworks Condition="'$(UseIntrinsics)' == 'true'">netstandard2.0;netcoreapp3.0</TargetFrameworks>
+    <TargetFrameworks>netstandard2.0;netcoreapp3.0</TargetFrameworks> 
     <IncludeInPackage>Microsoft.ML.CpuMath</IncludeInPackage>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <DefineConstants>$(DefineConstants);CORECLR;PRIVATE_CONTRACTS</DefineConstants>
     <LangVersion>7.3</LangVersion>
+    <UseIntrinsics>true</UseIntrinsics>
   </PropertyGroup>
 
   <ItemGroup>

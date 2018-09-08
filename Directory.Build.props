@@ -103,7 +103,7 @@
   </PropertyGroup>
 
   <PropertyGroup>
-    <UseIntrinsics Condition="'$(UseIntrinsics)' == ''">$(Configuration.EndsWith('-Intrinsics'))</UseIntrinsics>
+    <UseIntrinsics Condition="'$(UseIntrinsics)' == ''">true</UseIntrinsics> 
   </PropertyGroup>
 
   <PropertyGroup>

@@ -4,6 +4,8 @@
     <LangVersion>7.2</LangVersion>
     <StartupObject>Microsoft.ML.Benchmarks.Program</StartupObject>
     <TargetFramework>netcoreapp3.0</TargetFramework>
+    <RuntimeFrameworkVersion>3.0.0-preview1-26822-01</RuntimeFrameworkVersion>
+    <UseIntrinsics>true</UseIntrinsics>
   </PropertyGroup>
   <ItemGroup>
     <Compile Remove="BenchmarkDotNet.Artifacts\**" />

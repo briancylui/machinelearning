@@ -10,6 +10,7 @@ using BenchmarkDotNet.Toolchains;
 using BenchmarkDotNet.Toolchains.CsProj;
 using BenchmarkDotNet.Toolchains.DotNetCli;
 using Microsoft.ML.Benchmarks.Harness;
+using System;
 using System.Globalization;
 using System.IO;
 using System.Threading;
@@ -41,9 +42,10 @@ namespace Microsoft.ML.Benchmarks
         /// </summary>
         private static IToolchain CreateToolchain()
         {
-            var csProj = CsProjCoreToolchain.Current.Value;
-            var tfm = NetCoreAppSettings.Current.Value.TargetFrameworkMoniker;
-
+            var settings = new NetCoreAppSettings("netcoreapp3.0", "3.0.0-preview1-26822-01", ".NET Core 3.0"); 
+            var csProj = CsProjCoreToolchain.From(settings); 
+            var tfm = settings.TargetFrameworkMoniker; 
+            Console.WriteLine($"@@@ {tfm} -- {csProj}");
             return new Toolchain(
                 tfm, 
                 new ProjectGenerator(tfm), 
